@@ -1,0 +1,35 @@
+name: test_demo
+description: "A new Flutter project."
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  dio: ^5.7.0
+  palette_generator: ^0.3.3+5
+  just_audio: ^0.9.42
+  flutter_svg_icons: ^0.0.1+4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  assets:
+    - assets/
+
+  fonts:
+    - family: AlimamaDongFangDaKai
+      fonts:
+        - asset: fonts/AlimamaDongFangDaKai-Regular.ttf
+
+  uses-material-design: true
