@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:palette_generator/palette_generator.dart';
@@ -104,15 +106,14 @@ class _lyrcisPageState extends State<lyrcisPage> {
     return outputColors;
   }
 
-  List<Widget> Circle = [];
+  List<Widget> circleList = [];
   @override
   Widget build(BuildContext context) {
     getImageColor();
     Size ScreenSize = MediaQuery.sizeOf(context);
     List<Widget> getCircle = [];
-    // debugPrint("nihao");
     return FutureBuilder<List<Color>>(
-        future: getImageColor(), // async work
+        future: getImageColor(),
         builder: (BuildContext context, AsyncSnapshot<List<Color>> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -121,20 +122,23 @@ class _lyrcisPageState extends State<lyrcisPage> {
               if (snapshot.hasError)
                 return new Text('Error: ${snapshot.error}');
               else {
-                Circle = [];
+                circleList = [];
                 for (var index = 0; index < 4; index++) {
                   if (index == 0) {
                     getCircle.add(Positioned(
-                      left: ScreenSize.width - ScreenSize.width * 0.9,
-                      top: ScreenSize.height - ScreenSize.height * 0.6,
-                      child: ClipOval(
-                        child: Container(
-                          height: ScreenSize.height * 0.8,
-                          width: ScreenSize.height * 0.8,
-                          // margin: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              // borderRadius: BorderRadius.circular(400),
-                              color: snapshot.data![index].withAlpha(1000)),
+                      left: ScreenSize.width * 0.1,
+                      top: ScreenSize.height * 0.5,
+                      // top: ScreenSize.height * 0.4,
+                      child: OverflowBox(
+                        maxWidth: double.infinity,
+                        maxHeight: double.infinity,
+                        child: ClipOval(
+                          child: Container(
+                            height: ScreenSize.height * 0.7,
+                            width: ScreenSize.height * 0.7,
+                            decoration: BoxDecoration(
+                                color: snapshot.data![index].withAlpha(1000)),
+                          ),
                         ),
                       ),
                     ));
@@ -142,16 +146,19 @@ class _lyrcisPageState extends State<lyrcisPage> {
                   if (index == 1) {
                     getCircle.add(
                       Positioned(
-                        left: -(ScreenSize.width - ScreenSize.width * 0.5),
-                        top: -(ScreenSize.height - ScreenSize.height * 0.9),
-                        child: ClipOval(
-                          child: Container(
-                            height: ScreenSize.height * 0.6,
-                            width: ScreenSize.height * 0.6,
-                            // margin: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                // borderRadius: BorderRadius.circular(400),
-                                color: snapshot.data![index].withAlpha(700)),
+                        left: -(ScreenSize.width * 0.5),
+                        top: ScreenSize.height * 0.2,
+                        // top: -(ScreenSize.height * 0.1),
+                        child: OverflowBox(
+                          maxWidth: double.infinity,
+                          maxHeight: double.infinity,
+                          child: ClipOval(
+                            child: Container(
+                              height: ScreenSize.height * 0.6,
+                              width: ScreenSize.height * 0.6,
+                              decoration: BoxDecoration(
+                                  color: snapshot.data![index].withAlpha(700)),
+                            ),
                           ),
                         ),
                       ),
@@ -160,16 +167,19 @@ class _lyrcisPageState extends State<lyrcisPage> {
                   if (index == 2) {
                     getCircle.add(
                       Positioned(
-                        left: ScreenSize.width - ScreenSize.width * 0.6,
-                        top: ScreenSize.height - ScreenSize.height,
-                        child: ClipOval(
-                          child: Container(
-                            height: ScreenSize.height * 0.5,
-                            width: ScreenSize.height * 0.5,
-                            // margin: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                // borderRadius: BorderRadius.circular(400),
-                                color: snapshot.data![index].withAlpha(500)),
+                        left: ScreenSize.width * 0.4,
+                        top: ScreenSize.height * 0.2,
+                        // top: 0,
+                        child: OverflowBox(
+                          maxWidth: double.infinity,
+                          maxHeight: double.infinity,
+                          child: ClipOval(
+                            child: Container(
+                              height: ScreenSize.height * 0.5,
+                              width: ScreenSize.height * 0.5,
+                              decoration: BoxDecoration(
+                                  color: snapshot.data![index].withAlpha(500)),
+                            ),
                           ),
                         ),
                       ),
@@ -178,16 +188,19 @@ class _lyrcisPageState extends State<lyrcisPage> {
                   if (index == 3) {
                     getCircle.add(
                       Positioned(
-                        left: -(ScreenSize.width - ScreenSize.width * 0.7),
-                        top: ScreenSize.height - ScreenSize.height * 0.5,
-                        child: ClipOval(
-                          child: Container(
-                            height: ScreenSize.height * 0.5,
-                            width: ScreenSize.height * 0.5,
-                            // margin: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                // borderRadius: BorderRadius.circular(400),
-                                color: snapshot.data![index].withAlpha(500)),
+                        left: -(ScreenSize.width * 0.3),
+                        top: ScreenSize.height * 0.6,
+                        // top: ScreenSize.height * 0.5,
+                        child: OverflowBox(
+                          maxWidth: double.infinity,
+                          maxHeight: double.infinity,
+                          child: ClipOval(
+                            child: Container(
+                              height: ScreenSize.height * 0.5,
+                              width: ScreenSize.height * 0.5,
+                              decoration: BoxDecoration(
+                                  color: snapshot.data![index].withAlpha(500)),
+                            ),
                           ),
                         ),
                       ),
@@ -195,24 +208,86 @@ class _lyrcisPageState extends State<lyrcisPage> {
                   }
                 }
                 for (var i = 0; i < 4; i++) {
-                  Circle.add(getCircle[3-i]);
+                  circleList.add(getCircle[3 - i]);
                 }
-                Circle.add(BackdropFilter(
-                  filter: ui.ImageFilter.blur(sigmaX: 150.0, sigmaY: 150.0),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                ));
                 return Container(
                   width: double.infinity,
                   height: double.infinity,
                   decoration: const BoxDecoration(color: Colors.black),
                   child: Stack(
-                    children: Circle,
+                    children: [
+                      RotatingCircles(
+                        circleList: circleList,
+                      ),
+                      BackdropFilter(
+                        filter:
+                            ui.ImageFilter.blur(sigmaX: 150.0, sigmaY: 150.0),
+                        child: Container(
+                          color: Colors.black.withOpacity(0.2),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
           }
         });
+  }
+}
+
+class RotatingCircles extends StatefulWidget {
+  final List<Widget> circleList;
+  const RotatingCircles({super.key, required this.circleList});
+
+  @override
+  _RotatingCirclesState createState() => _RotatingCirclesState();
+}
+
+class _RotatingCirclesState extends State<RotatingCircles>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 15),
+      vsync: this,
+    )
+    ..repeat()
+    ;
+    _animation = Tween<double>(begin: 0, end: 2 * pi).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  List<AnimatedBuilder> addAnimatedBuilder(List<Widget> circleList) {
+    List<AnimatedBuilder> animatedBuildersList = [];
+
+    for (var index = 0; index < circleList.length; index++) {
+      animatedBuildersList.add(AnimatedBuilder(
+        animation: _animation,
+        child: circleList[index],
+        builder: (context, child) {
+          final angle = _animation.value + (index * 2 * pi / circleList.length);
+          final offset = Offset(100 * cos(angle), 100 * sin(angle));
+          return Transform.translate(
+            offset: offset,
+            child: child,
+          );
+        },
+      ));
+    }
+    return animatedBuildersList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: addAnimatedBuilder(widget.circleList));
   }
 }
