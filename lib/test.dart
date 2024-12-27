@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 void main() {
   runApp(MyApp());
@@ -9,57 +8,68 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: RotatingCircles(),
-        ),
-      ),
+      home: AnimatedListExample(),
     );
   }
 }
 
-class RotatingCircles extends StatefulWidget {
+class AnimatedListExample extends StatefulWidget {
   @override
-  _RotatingCirclesState createState() => _RotatingCirclesState();
+  _AnimatedListExampleState createState() => _AnimatedListExampleState();
 }
 
-class _RotatingCirclesState extends State<RotatingCircles> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _AnimatedListExampleState extends State<AnimatedListExample> {
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  final List<String> _items = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 5),
-      vsync: this,
-    )..repeat();
-    _animation = Tween<double>(begin: 0, end: 2 * pi).animate(_controller);
+  void _addItem() {
+    _items.insert(0, 'Item ${_items.length + 1}');
+    _listKey.currentState?.insertItem(0);
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void _removeItem(int index) {
+    String removedItem = _items.removeAt(index);
+    _listKey.currentState?.removeItem(
+      index,
+      (context, animation) => _buildItem(removedItem, animation),
+    );
+  }
+
+  Widget _buildItem(String item, Animation<double> animation) {
+    return SizeTransition(
+      sizeFactor: animation,
+      axis: Axis.vertical,
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        child: ListTile(
+          title: Text(item),
+          trailing: IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () => _removeItem(_items.indexOf(item)),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: List.generate(5, (index) {
-        return AnimatedBuilder(
-          animation: _animation,
-          child: CircleAvatar(radius: 20),
-          builder: (context, child) {
-            final angle = _animation.value + (index * 2 * pi / 5);
-            final offset = Offset(100 * cos(angle), 100 * sin(angle));
-            return Transform.translate(
-              offset: offset,
-              child: child,
-            );
-          },
-        );
-      }),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('AnimatedList 示例'),
+      ),
+      body: AnimatedList(
+        key: _listKey,
+        initialItemCount: _items.length,
+        itemBuilder: (context, index, animation) {
+          return _buildItem(_items[index], animation);
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addItem,
+        tooltip: '添加项',
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
